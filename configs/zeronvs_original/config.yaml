@@ -1,0 +1,99 @@
+# finetuning from zeronvs
+# conditioning: 
+# 1. concat target image, reference image, warped depth image
+# 2. cross attn: ref image clip (1x768) + relative pose (1x19, scaled by 20th depth quantile) concat then pass through a linear layer to 1x768
+# using pretrained cc_projection (from zeronvs)
+# adjust gradient accumulation 
+
+training:
+  project: megascenes_nvs
+  exp_name: 'zeronvs_baseline_finetune'
+  learning_rate: 1e-4
+  pose_cond: zeronvs_baseline
+  gradient_accumulation_steps: 1
+  pos_enc: null # add other data configs here
+  log_images_kwargs:
+    ddim_steps: 50
+    use_ema_scope: False
+    inpaint: False
+    plot_progressive_rows: False
+    plot_diffusion_rows: False
+    N: 8
+    unconditional_guidance_scale: 3.0
+    unconditional_guidance_label: [""]
+
+model:
+  target: ldm.models.diffusion.ddpm.LatentDiffusion
+  params:
+    concat_dim_in: null # not instantiating linear layer because ref image already has dim 8
+    linear_start: 0.00085
+    linear_end: 0.0120
+    num_timesteps_cond: 1
+    log_every_t: 200
+    timesteps: 1000
+    first_stage_key: "image_target"
+    cond_stage_key: "image_cond"
+    image_size: 32
+    channels: 4
+    cond_stage_trainable: false   
+    conditioning_key: hybrid
+    monitor: train/loss_simple_ema
+    scale_factor: 0.18215
+
+    scheduler_config: # 10000 warmup steps
+      target: ldm.lr_scheduler.LambdaLinearScheduler
+      params:
+        warm_up_steps: [ 100 ]
+        cycle_lengths: [ 10000000000000 ] 
+        f_start: [ 1.e-6 ]
+        f_max: [ 1. ]
+        f_min: [ 1. ]
+
+    unet_config:
+      target: ldm.modules.diffusionmodules.openaimodel.UNetModel
+      params:
+        image_size: 32 # unused
+        in_channels: 8 # ref and target images (4 each) 
+        out_channels: 4
+        model_channels: 320
+        attention_resolutions: [ 4, 2, 1 ]
+        num_res_blocks: 2
+        channel_mult: [ 1, 2, 4, 4 ]
+        num_heads: 8
+        use_spatial_transformer: True
+        transformer_depth: 1
+        context_dim: 768
+        use_checkpoint: True
+        legacy: False
+
+    first_stage_config:
+      target: ldm.models.autoencoder.AutoencoderKL
+      params:
+        embed_dim: 4
+        monitor: train/rec_loss
+        ddconfig:
+          double_z: true
+          z_channels: 4
+          resolution: 256
+          in_channels: 3
+          out_ch: 3
+          ch: 128
+          ch_mult:
+          - 1
+          - 2
+          - 4
+          - 4
+          num_res_blocks: 2
+          attn_resolutions: []
+          dropout: 0.0
+        lossconfig:
+          target: torch.nn.Identity
+
+    cond_stage_config:
+      target: ldm.modules.encoders.modules.FrozenCLIPImageEmbedder
+
+    extra_layer_config:
+      target: torch.nn.Linear
+      params: 
+        in_features: 787
+        out_features: 768
