@@ -57,6 +57,7 @@ class PairedDataset(Dataset):
         path 1, path2 in self.paired_images are absolute paths that should be converted to your local paths
         format of path1, path2: '/share/phoenix/nfs05/S8/jt664/WikiSFM/data/main/images/{category}/commons/{subcategory}/0/pictures/{imgname.png}'
         replace '/share/phoenix/nfs05/S8/jt664/WikiSFM/data/main/images/' with new image path
+        replace space characters in '{imgname.png}' with underscores (' ' -> '_')
 
         if images in new image path are not resized to 256x256, resize them here
         '''
