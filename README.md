@@ -7,13 +7,12 @@ This repository contains the official implementation of single-image novel view 
 
 If you find our code or paper useful, please consider citing
 ```bibtex
-@misc{
+@inproceedings{
       tung2024megascenes,
       title={MegaScenes: Scene-Level View Synthesis at Scale}, 
       author={Tung, Joseph and Chou, Gene and Cai, Ruojin and Yang, Guandao and Zhang, Kai and Wetzstein, Gordon and Hariharan, Bharath and Snavely, Noah},
-      year={2024},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
+      journal={ECCV},
+      year={2024}
     }
 ```
 
@@ -25,6 +24,8 @@ conda create -n megascenes python=3.8 pip --yes
 conda activate megascenes
 bash setup_env.sh
 ```
+
+Additionally, install Depth Anything following the instructions from the official [repository](https://github.com/LiheYoung/Depth-Anything). This will be required for inference. 
 
 ## Downloading Pretrained Models 
 We provide two checkpoints in the MegaScenes AWS bucket. Download the folder `s3://megascenes/nvs_checkpoints/warp_plus_pose/iter_112000/` to the directory `configs/warp_plus_pose/iter_112000/`. This model is conditioned on warped images and poses as described in the paper. Download the folder `s3://megascenes/nvs_checkpoints/zeronvs_finetune/iter_90000/` to the directory `configs/zeronvs_finetune/iter_90000/`. This checkpoint is ZeroNVS finetuned on MegaScenes. For comparison, also download the original ZeroNVS [checkpoint](https://drive.google.com/file/d/17WEMfs2HABJcdf4JmuIM3ti0uz37lSZg/view) to the directory `configs/zeronvs_original/iter_0/zeronvs.ckpt`.

@@ -2,9 +2,6 @@ import numpy as np
 import os, json, sys
 import matplotlib.pyplot as plt
 
-submodule_path = ( "/share/phoenix/nfs05/S8/gc492/scene_gen/Depth-Anything" )
-assert os.path.exists(submodule_path)
-sys.path.insert(0, submodule_path)
 import depth_anything.dpt
 from depth_anything.dpt import DepthAnything
 from depth_anything.util.transform import Resize, NormalizeImage, PrepareForNet
@@ -94,106 +91,7 @@ def get_orbit_poses(cwx=(0,1), ccwx=(0,-1)):
     orbitposes.extend(cwposes[:-1])
     orbitposes.extend(ccwposes)
     return orbitposes
-# def get_orbit_poses(num_steps=20, radius=1, total_angle=60, speed_factor=2, w2c=True):
-#     """
-#     Generate extrinsic matrices for a camera moving in a smooth orbit around an object,
-#     with monotonically changing translation and adjustable speed.
 
-#     :param num_steps: Number of steps in the camera path.
-#     :param radius: Radius of the circle on which the camera moves.
-#     :param total_angle: Total angle of the orbit in degrees (30 degrees each way from the origin).
-#     :param speed_factor: Factor to control the speed of translation. Greater than 1 for faster, less than 1 for slower.
-#     :return: List of extrinsic matrices (4x4 numpy arrays).
-#     """
-#     extrinsics = []
-#     angle_increment = np.radians(total_angle) / (num_steps - 1)  # Adjusted angle step for each pose
-
-#     for step in range(num_steps):
-#         # Calculate the current angle
-#         theta = -np.radians(total_angle / 2) + angle_increment * step
-
-#         # Linear interpolation for x-coordinate
-#         x = -radius + (2 * radius) * (step / (num_steps - 1))
-#         x*=speed_factor
-
-#         z = radius * np.cos(theta) - radius
-
-#         t = np.array([x, 0, z])
-#         #print(t)
-
-#         # Rotation matrix (around the y-axis)
-#         R = np.array([
-#             [np.cos(theta), 0, np.sin(theta)],
-#             [0, 1, 0],
-#             [-np.sin(theta), 0, np.cos(theta)]
-#         ])
-
-#         # Create extrinsic matrix (4x4)
-#         extrinsic_matrix = np.eye(4)
-#         extrinsic_matrix[:3, :3] = R
-#         extrinsic_matrix[:3, 3] = -t
-
-#         if not w2c:
-#             extrinsic_matrix = np.linalg.inv(extrinsic_matrix)
-#         extrinsics.append(extrinsic_matrix)
-
-#     return extrinsics
-
-    # if ccw:
-    #     extrinsics = []
-    #     theta_increment = np.radians(rotation_angle) / (num_steps * speed_factor)  # Increase speed_factor to slow down
-    #     for step in range(num_steps):
-    #         theta = theta_increment * step #  np.radians(rotation_angle) * step / num_steps
-    
-    #         # Rotation matrix (around the y-axis)
-    #         R = np.array([
-    #             [np.cos(theta), 0, np.sin(theta)],
-    #             [0, 1, 0],
-    #             [-np.sin(theta), 0, np.cos(theta)]
-    #         ])
-    
-    #         # Translation vector
-    #         t = np.array([radius * np.cos(theta), 0, radius * np.sin(theta)])
-    
-    #         # Create extrinsic matrix (4x4)
-    #         extrinsic_matrix = np.eye(4)
-    #         extrinsic_matrix[:3, :3] = R
-    #         extrinsic_matrix[:3, 3] = -R @ t
-    
-    #         if c2w:
-    #             extrinsic_matrix = np.linalg.inv(extrinsic_matrix)
-    #         extrinsics.append(extrinsic_matrix)
-    # else:
-    #     extrinsics = []
-    #     theta_increment = np.radians(rotation_angle) / (num_steps * speed_factor)  # Increase speed_factor to slow down
-    #     for step in range(num_steps):
-    #         theta = theta_increment * step #  np.radians(rotation_angle) * step / num_steps
-    
-    #         # Rotation matrix (around the y-axis)
-    #         # R = np.array([
-    #         #     [np.cos(theta), 0, np.sin(theta)],
-    #         #     [0, 1, 0],
-    #         #     [-np.sin(theta), 0, np.cos(theta)]
-    #         # ])
-    #         R = np.array([
-    #             [np.cos(theta), 0, -np.sin(theta)],
-    #             [0, 1, 0],
-    #             [np.sin(theta), 0, np.cos(theta)]
-    #         ])
-    
-    #         # Translation vector
-    #         t = np.array([-radius * np.cos(theta), 0, radius * np.sin(theta)])
-    
-    #         # Create extrinsic matrix (4x4)
-    #         extrinsic_matrix = np.eye(4)
-    #         extrinsic_matrix[:3, :3] = R
-    #         extrinsic_matrix[:3, 3] = -R @ t
-    
-    #         if c2w:
-    #             extrinsic_matrix = np.linalg.inv(extrinsic_matrix)
-    #         extrinsics.append(extrinsic_matrix)
-
-    # return extrinsics
 
 def get_front_facing_trans(num_frames, max_trans=2.0, c2w=True, z_div=2.0):
     output_poses = []
@@ -215,28 +113,7 @@ def get_front_facing_trans(num_frames, max_trans=2.0, c2w=True, z_div=2.0):
         output_poses.append(i_pose)
 
     return output_poses
-
-def showbatch(imgs):
-    fig, axs = plt.subplots(3, 3, figsize=(20, 15))
-    #for idx, img in enumerate(imgs):
-    axs[0,0].imshow(imgs[0])
-    axs[0,0].axis('off')  
-    axs[0,1].imshow(imgs[1])
-    axs[0,1].axis('off')  
-    axs[0,2].imshow(imgs[2])
-    axs[0,2].axis('off')  
-    axs[1,0].imshow(imgs[3])
-    axs[1,0].axis('off')  
-    axs[1,1].imshow(imgs[4])
-    axs[1,1].axis('off')  
-    axs[1,2].imshow(imgs[5])
-    axs[1,2].axis('off')  
-    axs[2,0].imshow(imgs[6])
-    axs[2,0].axis('off')  
-    axs[2,1].imshow(imgs[7])
-    axs[2,1].axis('off')  
-    axs[2,2].imshow(imgs[8])
-    axs[2,2].axis('off')  
+  
 
 def load_depth_model():
     # load depth model

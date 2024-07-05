@@ -14,9 +14,6 @@ from torch.utils.data import Dataset
 from PIL import Image
 import warnings
 
-submodule_path = ( "/share/phoenix/nfs05/S8/gc492/scene_gen/Depth-Anything" )
-assert os.path.exists(submodule_path)
-sys.path.insert(0, submodule_path)
 import depth_anything.dpt
 from depth_anything.dpt import DepthAnything
 from depth_anything.util.transform import Resize, NormalizeImage, PrepareForNet
