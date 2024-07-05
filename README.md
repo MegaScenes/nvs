@@ -1,6 +1,6 @@
 # MegaScenes: Scene-Level View Synthesis at Scale
 
-[**Paper**](https://megascenes.github.io/MegaScenes_paper_v1.pdf) | [**Arxiv**](https://arxiv.org/abs/) | [**Project Page**](https://megascenes.github.io) <br>
+[**Paper**](https://megascenes.github.io/MegaScenes_paper_v1.pdf) | [**Arxiv**](https://arxiv.org/abs/2406.11819) | [**Project Page**](https://megascenes.github.io) <br>
 
 
 This repository contains the official implementation of single-image novel view synthesis (NVS) from the project **MegaScenes: Scene-Level View Synthesis at Scale**. Details on the dataset can be found [here](https://github.com/MegaScenes/dataset).
