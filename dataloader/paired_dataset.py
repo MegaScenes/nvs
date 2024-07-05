@@ -61,7 +61,19 @@ class PairedDataset(Dataset):
 
         if images in new image path are not resized to 256x256, resize them here
         '''
-        return self.local_img_path + old_path.split('main/images/')[-1]
+        rel_path = old_path.split('main/images/')[-1]  # '{category}/commons/{subcategory}/0/pictures/{imgname.png}'
+        
+        split = rel_path.split('0/pictures/')
+        cat_subcat = split[0]       # '{category}/commons/{subcategory}/'
+        image_name = split[-1]      # '{imgname.png}'
+        
+        # TODO: change {category} in cat_subcat to 6-digit 
+        # zero-padded scene-id, like `123/456/`. See dataset documentation on
+        # Scene Folders.
+
+        image_name = image_name.replace(' ', '_')
+
+        return os.path.join(self.local_img_path, cat_subcat, image_name)
 
 
     def img_path_to_warped_path(self, path1, path2):
