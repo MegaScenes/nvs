@@ -11,7 +11,7 @@ If you find our code or paper useful, please consider citing
       tung2024megascenes,
       title={MegaScenes: Scene-Level View Synthesis at Scale}, 
       author={Tung, Joseph and Chou, Gene and Cai, Ruojin and Yang, Guandao and Zhang, Kai and Wetzstein, Gordon and Hariharan, Bharath and Snavely, Noah},
-      journal={ECCV},
+      booktitle={ECCV},
       year={2024}
     }
 ```
